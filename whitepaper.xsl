@@ -20,10 +20,10 @@
 	-[x] table of contents
 	-[x] embed metadata
 	-[x] A4/US letter choice
-	-[ ] admonition icons
+	-[x] admonition icons
 	-[x] single-multipage
 	-[x] date
-	-[-] embed table of contents
+	-[x] embed table of contents
 	-[x] numbering on orderedlists
 	-[ ] FontAwesome icons
 	-[x] links within code.kx.com
@@ -36,6 +36,9 @@
 				xmlns:xlink="http://www.w3.org/1999/xlink"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 >
+
+    <!-- parameters -->
+    <xsl:param name="paper-size"/>
 
     <!-- metadata -->
     <xsl:variable name="article-title" select="/db:article/db:info/db:title"/>
@@ -60,7 +63,7 @@
     <xsl:variable name="article-keywords" select="/db:article/db:info/db:keywords"/>
 
     <!-- type and layout -->
-    <xsl:variable name="paper-size">A4</xsl:variable>
+    <!-- <xsl:variable name="paper-size">A4</xsl:variable> -->
 
     <xsl:variable name="display-type">Proxima Nova</xsl:variable>
     <xsl:variable name="body-type">STIX2</xsl:variable>
@@ -68,10 +71,10 @@
     <xsl:variable name="icon-type">Material Icons</xsl:variable>
     <xsl:variable name="kx-blue">#0070cd</xsl:variable>
     <!-- whitepaper graphics  (URLs are relative to XML, not XSL) -->
-    <xsl:variable name="big-white-kx">url(../img/kx-cover.png)</xsl:variable>
-    <xsl:variable name="diamonds-bl">url(../img/diamond-bottom-left-white.png)</xsl:variable>
-    <xsl:variable name="diamonds-tr">url(../img/diamond-white.png)</xsl:variable>
-    <xsl:variable name="about-time">url(../img/its-about-time.png)</xsl:variable>
+    <xsl:variable name="big-white-kx">url(/Users/sjt/Projects/kx/github/StephenTaylor-Kx/mkdocs2pdf/img/kx-cover.png)</xsl:variable>
+    <xsl:variable name="diamonds-bl">url(/Users/sjt/Projects/kx/github/StephenTaylor-Kx/mkdocs2pdf/img/diamond-bottom-left-white.png)</xsl:variable>
+    <xsl:variable name="diamonds-tr">url(/Users/sjt/Projects/kx/github/StephenTaylor-Kx/mkdocs2pdf/img/diamond-white.png)</xsl:variable>
+    <xsl:variable name="about-time">url(/Users/sjt/Projects/kx/github/StephenTaylor-Kx/mkdocs2pdf/img/its-about-time.png)</xsl:variable>
     <!-- Material icons: see template admonition-icons -->
 
     <!-- site URL: prefix for internal hyperlinks -->
@@ -93,14 +96,14 @@
 
     	<xsl:variable name="page-width">
     		<xsl:choose>
-    			<xsl:when test="$paper-size='A4'">210mm</xsl:when>
-    			<xsl:when test="$paper-size='US Letter'">8.5in</xsl:when>
+    			<xsl:when test="$paper-size='a4'">210mm</xsl:when>
+    			<xsl:when test="$paper-size='us'">8.5in</xsl:when>
     		</xsl:choose>
     	</xsl:variable>
     	<xsl:variable name="page-height">
     		<xsl:choose>
-    			<xsl:when test="$paper-size='A4'">297mm</xsl:when>
-    			<xsl:when test="$paper-size='US Letter'">11in</xsl:when>
+    			<xsl:when test="$paper-size='a4'">297mm</xsl:when>
+    			<xsl:when test="$paper-size='us'">11in</xsl:when>
     		</xsl:choose>
     	</xsl:variable>
 
@@ -110,7 +113,7 @@
 			<rx:meta-info>
 				<rx:meta-field name="author" value="{$author-name}"/>
 				<rx:meta-field name="creator" value="Kx Systems"/>
-				<rx:meta-field name="title" value="$article-title"/>
+				<rx:meta-field name="title" value="{$article-title}"/>
 				<!-- <rx:meta-field name="subject" value=""/> -->
 				<rx:meta-field name="keywords" value="Kx, Kx Systems, kdb+, {$article-keywords}"/>
 			</rx:meta-info>
@@ -271,7 +274,9 @@
 						</fo:block>
 
 						<!-- title -->
-						<fo:block margin-top="9pt" font-size="24pt" font-weight="400">
+						<fo:block margin-top="9pt" margin-right="30mm"
+							line-height="1.4"
+							font-size="24pt" font-weight="400">
 							<xsl:value-of select="$article-title"/>
 						</fo:block>
 					</fo:block-container>
@@ -297,7 +302,14 @@
 					</fo:block-container>
 					<fo:block-container absolute-position="absolute" top="180mm" left="55mm" width="100mm">
 						<fo:block line-height="16pt" text-align="left">
-							<xsl:apply-templates select="//db:section[@xml:id='author' or @xml:id='authors']/db:para"/>
+							<xsl:choose>
+								<xsl:when test="//db:section[@xml:id='author' or @xml:id='authors']/db:para">
+									<xsl:apply-templates select="//db:section[@xml:id='author' or @xml:id='authors']/db:para"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$author-name"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</fo:block>
 					</fo:block-container>
 
@@ -416,7 +428,6 @@
 		<xsl:choose>
 			<xsl:when test="$depth&lt;2">
 				<fo:block id="{generate-id(.)}"
-					font-family="{$display-type}"
 					font-size="18pt"
 					line-height="22pt"
 					margin-right="36pt"
@@ -673,6 +684,7 @@
 			font-family="{$code-type}" font-size="10pt"
 			margin-bottom="12pt"
 			margin-left="10pt"
+			page-break-inside="avoid"
 			white-space="pre"
 			>
 			<xsl:value-of select="."/>
@@ -692,7 +704,7 @@
 					<fo:table-row>
 						<xsl:for-each select="db:tgroup/db:thead/db:row/db:entry">
 							<fo:table-cell font-style="italic"
-								padding-left="5pt" padding-right="5pt" 
+								padding-bottom="3pt" padding-left="5pt" padding-right="5pt" 
 								>
 								<xsl:variable name="colno" select="position()"/>
 								<fo:block linefeed-treatment="preserve">
@@ -712,9 +724,10 @@
 							<xsl:for-each select="db:entry">
 								<xsl:variable name="colno" select="position()"/>
 								<fo:table-cell
-									padding-left="5pt" padding-right="5pt" 
+									padding-top="3pt" padding-bottom="3pt" padding-left="5pt" padding-right="5pt" 
 									>
-									<fo:block linefeed-treatment="preserve">
+									<fo:block>
+									<!-- <fo:block linefeed-treatment="preserve"> -->
 										<xsl:attribute name="text-align">
 											<xsl:value-of select="../../../db:colspec[$colno]/@align"/>
 										</xsl:attribute>

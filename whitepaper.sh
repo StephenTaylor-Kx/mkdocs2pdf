@@ -2,6 +2,7 @@
 # Title: From MD/s produce sibling XML, FO, and PDF
 #        Requires whitepaper.xsl as sibling
 # Author: stephen@kx.com
+# Version: 2018.07.13
 
 #https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 # defaults
@@ -9,6 +10,7 @@
 HELP=NO
 OUTPUT="" # defaults to first MD in manifest
 MANIFEST=() # MDs
+PAPERSIZES=("a4" "us")
 RES="" # result report
 UNKNOWN=() # unidentified options
 USAGE='Usage: whitepaper.sh [ [-?|-h|--help] | [ [-o|--output] output] file [file [file] … ] ]'
@@ -90,28 +92,34 @@ else
 		RES+="Pandoc error $ERR\n"
 	else
 		RES+="Wrote $filename.xml\n"
-		# XML => FO
-		# Saxon XSLT processor in XEP choking on amespace [?] issue
-		# good idea for debugging to write separate FO anyway
-		printf "xsltproc -o $filename.fo whitepaper.xsl $filename.xml\n" # db
-		eval "xsltproc -o $filename.fo whitepaper.xsl $filename.xml"
-		ERR=$?
-		if [ $ERR != 0 ]
-			then
-			RES+="XSLT error $ERR\n"
-		else
-			RES+="Wrote $filename.fo\n"
-			# FO => PDF
-			printf "/Users/sjt/Tools/XEP/xep $filename.fo\n" # db
-			eval "/Users/sjt/Tools/XEP/xep $filename.fo"
+		for ps in ${PAPERSIZES[@]}
+		do
+			output=$filename-$ps
+			# XML => FO
+			# Saxon XSLT processor in XEP choking on amespace [?] issue
+			# good idea for debugging to write separate FO anyway
+			cmd="xsltproc -o $output.fo --stringparam paper-size \"$ps\" whitepaper.xsl $filename.xml" # db
+			printf "$cmd\n" # db
+			eval $cmd
 			ERR=$?
 			if [ $ERR != 0 ]
 				then
-				RES+="XEP error $ERR\n"
+				RES+="XSLT error $ERR\n"
 			else
-				RES+="Wrote $filename.pdf\n"
+				RES+="Wrote $output.fo\n"
+				# FO => PDF
+				cmd="/Users/sjt/Tools/XEP/xep $output.fo" # db
+				printf "$cmd\n" # db
+				eval $cmd
+				ERR=$?
+				if [ $ERR != 0 ]
+					then
+					RES+="XEP error $ERR\n"
+				else
+					RES+="Wrote $output.pdf\n"
+				fi
 			fi
-		fi
+		done
 	fi
 fi
 
