@@ -73,15 +73,15 @@ $QHOME/m64/q filtr.q websockets $SRC/index.md;
 ./whitepaper.sh $SRC/websockets.md;
 
 # NLP Toolkit
-SRC=~/Projects/kx/code/q/docs/ml/nlp;
-$QHOME/m64/q filtr.q nlp-toolkit $SRC/index.md \
-$SRC/feature-vectors.md \
-$SRC/comparisons.md \
-$SRC/clustering.md \
-$SRC/finding-outliers.md \
-$SRC/explaining-similarities.md \
-$SRC/sentiment-analysis.md \
-$SRC/mbox.md \
-$SRC/parsing-emails.md \
-$SRC/useful-functions.md;
-./whitepaper.sh $SRC/nlp-toolkit.md;
+# SRC=~/Projects/kx/code/q/docs/ml/nlp;
+# $QHOME/m64/q filtr.q nlp-toolkit $SRC/index.md \
+# $SRC/feature-vectors.md \
+# $SRC/comparisons.md \
+# $SRC/clustering.md \
+# $SRC/finding-outliers.md \
+# $SRC/explaining-similarities.md \
+# $SRC/sentiment-analysis.md \
+# $SRC/mbox.md \
+# $SRC/parsing-emails.md \
+# $SRC/useful-functions.md;
+# ./whitepaper.sh $SRC/nlp-toolkit.md;
