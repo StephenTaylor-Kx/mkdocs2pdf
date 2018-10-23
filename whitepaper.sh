@@ -2,7 +2,7 @@
 # Title: From MD/s produce sibling XML, FO, and PDF
 #        Requires whitepaper.xsl as sibling
 # Author: stephen@kx.com
-# Version: 2018.07.13
+# Version: 2018.10.21
 
 #https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 # defaults
@@ -17,32 +17,32 @@ USAGE='Usage: whitepaper.sh [ [-?|-h|--help] | [ [-o|--output] output] file [fil
 
 while [[ $# -gt 0 ]]
 do
-key="$1"
+	key="$1"
 
-case $key in
-    # -d|--destination)
-    # DESTINATION="$2" # destination directory
-    # shift # past argument
-    # shift # past value
-    # ;;
-    \?|-h|--help)
-    HELP=YES
-    shift # past argument
-    ;;
-    -o|--output)
-    OUTPUT="$2" # PDF filename withOUT extension, e.g. websoockets
-    shift # past argument
-    shift # past value
-    ;;
-    -?)    # unknown option
-    UNKNOWN+=("$1") # save it in an array 
-    shift # past argument
-    ;;
-    *)    # unknown something
-    MANIFEST+=("$1") # save it in an array
-    shift # past argument
-    ;;
-esac
+	case $key in
+	    # -d|--destination)
+	    # DESTINATION="$2" # destination directory
+	    # shift # past argument
+	    # shift # past value
+	    # ;;
+	    \?|-h|--help)
+	    HELP=YES
+	    shift # past argument
+	    ;;
+	    -o|--output)
+	    OUTPUT="$2" # PDF filename withOUT extension, e.g. websoockets
+	    shift # past argument
+	    shift # past value
+	    ;;
+	    -?)    # unknown option
+	    UNKNOWN+=("$1") # save it in an array 
+	    shift # past argument
+	    ;;
+	    *)    # unknown something
+	    MANIFEST+=("$1") # save it in an array
+	    shift # past argument
+	    ;;
+	esac
 done
 set -- "${MANIFEST[@]}" # restore MANIFEST parameters
 
@@ -50,18 +50,18 @@ COUNT=${#MANIFEST[@]}
 
 # validate arguments
 if [ "$HELP" = "YES" ]
-	then
+then
 	ERR=1
 # elif [ ! -d $DESTINATION ]
 # then
 # 	ERR=2
 # 	EMSG="Not a directory: $DESTINATION"
 elif [ $COUNT = 0 ]
-	then
+then
 	ERR=3
 	RES+='No file/s specified\n'
 elif [ "${#UNKNOWN}" -gt 0 ]
-	then 
+then 
 	ERR=4
 	RES+="Unknown options: ${UNKNOWN[*]}\n"
 else
@@ -88,7 +88,7 @@ else
 	eval "$pandoc"
 	ERR=$?
 	if [ $ERR != 0 ]
-		then
+	then
 		RES+="Pandoc error $ERR\n"
 	else
 		RES+="Wrote $filename.xml\n"
@@ -103,7 +103,7 @@ else
 			eval $cmd
 			ERR=$?
 			if [ $ERR != 0 ]
-				then
+			then
 				RES+="XSLT error $ERR\n"
 			else
 				RES+="Wrote $output.fo\n"
@@ -113,19 +113,35 @@ else
 				eval $cmd
 				ERR=$?
 				if [ $ERR != 0 ]
-					then
+				then
 					RES+="XEP error $ERR\n"
 				else
 					RES+="Wrote $output.pdf\n"
+					eval "rm $output.fo"
+					RES+="Removed $output.fo\n"
 				fi
 			fi
 		done
+		if [ $ERR = 0 ]
+		then
+			# remove XML
+			eval "rm $filename.xml"
+			RES+="Removed $filename.xml\n"
+			# remove consolidated MD
+			cmd="rm "
+			for MD in ${MANIFEST[@]}
+			do
+				cmd+=" $MD"
+			done
+			eval $cmd
+			RES+="Removed $cmd\n"
+		fi
 	fi
 fi
 
-# report results
+# clean up and report results
 if [ $ERR != 0 ]
-	then
+then
 	RES+="$USAGE\n"
 fi
 echo -e $RES
