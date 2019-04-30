@@ -1,19 +1,43 @@
 #!/bin/bash
 # Title: Make PDFs from Markdown source for code.kx.com whitepapers
 # Author: stephen@kx.com
-# Version: 2018.10.21
+# Version: 2019.03.09
 
-QHOME=~/q; 
+QHOME=~/q;
 
-# embedPy and LASSO
-SRC=~/Projects/kx/code/q/docs/wp/embedpy-lasso;
-$QHOME/m64/q filtr.q embedpy-lasso $SRC/index.md \
-  $SRC/basics.md \
-  $SRC/lasso.md \
-  $SRC/clean.md \
-  $SRC/analysis.md \
-  $SRC/conclusion.md;
-./whitepaper.sh $SRC/embedpy-lasso.md;
+# Lightning tickerplants
+SRC=~/Projects/kx/code/v2/docs/wp/lightning-tickerplants;
+$QHOME/m64/q filtr.q lightning $SRC/index.md;
+./whitepaper.sh $SRC/lightning.md;
+
+# # Working with sym files
+# SRC=~/Projects/kx/code/v2/docs/wp/symfiles;
+# $QHOME/m32/q filtr.q symfiles $SRC/index.md;
+# ./whitepaper.sh $SRC/symfiles.md;
+
+# Exoplanets
+# SRC=~/Projects/kx/code/v1/docs/wp/exoplanets;
+# $QHOME/m32/q filtr.q exoplanets $SRC/index.md;
+# ./whitepaper.sh $SRC/exoplanets.md;
+
+# # Bitcoin blockchains
+# SRC=~/Projects/kx/code/v1/docs/wp/blockchain;
+# $QHOME/m32/q filtr.q blockchain $SRC/index.md;
+# ./whitepaper.sh $SRC/blockchain.md;
+
+# SRC=~/Projects/kx/code/v1/docs/wp/space-weather;
+# $QHOME/m32/q filtr.q space-weather $SRC/index.md;
+# ./whitepaper.sh $SRC/space-weather.md;
+
+# # embedPy and LASSO
+# SRC=~/Projects/kx/code/q/docs/wp/embedpy-lasso;
+# $QHOME/m64/q filtr.q embedpy-lasso $SRC/index.md \
+#   $SRC/basics.md \
+#   $SRC/lasso.md \
+#   $SRC/clean.md \
+#   $SRC/analysis.md \
+#   $SRC/conclusion.md;
+# ./whitepaper.sh $SRC/embedpy-lasso.md;
 
 # # Neural networkss
 # # FIXME problems with math notation
@@ -22,7 +46,7 @@ $QHOME/m64/q filtr.q embedpy-lasso $SRC/index.md \
 # ./whitepaper.sh $SRC/neural-networks.md;
 
 # Signal processing
-# SRC=~/Projects/kx/code/q/src/signal-processing;
+# SRC=~/Projects/kx/code/v2/docs//wp/signal-processing;
 # $QHOME/m64/q filtr.q signal-processing $SRC/index.md;
 # ./whitepaper.sh $SRC/signal-processing.md;
 

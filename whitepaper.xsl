@@ -2,6 +2,7 @@
 <!--
 	Title: XSL-FO for Technical Whitepaper from code.kx.com
 	Author: Stephen Taylor • stephen@kx.com
+	Version: 2019.04.30
 
 	Source is DocBook 5 XML converted by pandoc from MkDocs (Markdown) source files.
 	See github.com/kxsystems/docs
@@ -78,7 +79,7 @@
     <!-- Material icons: see template admonition-icons -->
 
     <!-- site URL: prefix for internal hyperlinks -->
-    <xsl:variable name="site-url">http://code.kx.com/q</xsl:variable>
+    <xsl:variable name="site-url">https://code.kx.com/v2</xsl:variable>
 
 	<!-- An XML compiled from multiple MDs will have multiple H1s -->
 	<!-- <xsl:variable name="source" select="count(/db:article/db:section)"/> -->
@@ -622,6 +623,7 @@
 	<!-- lists -->
 	<xsl:template match="db:itemizedlist">
 		<fo:list-block
+			margin-left="10pt"
 			provisional-distance-between-starts="0.3cm"
 			provisional-label-separation="0.15cm"
 			>
@@ -829,7 +831,7 @@
 
 	<!-- inline styles -->
 	<xsl:template match="db:code|db:literal|db:phrase">
-		<fo:inline font-family="{$code-type}"><xsl:apply-templates/></fo:inline>
+		<fo:inline font-family="{$code-type}" font-size="10.5pt"><xsl:apply-templates/></fo:inline>
 	</xsl:template>
 
 	<xsl:template match="db:emphasis">
@@ -857,6 +859,14 @@
 		<fo:inline font-weight="bold"><xsl:apply-templates/></fo:inline>
 	</xsl:template>
 
+	<xsl:template match="db:sub">
+		<fo:inline vertical-align="sub">
+			<fo:inline font-size="10pt">
+				<xsl:apply-templates/>
+			</fo:inline>
+		</fo:inline>
+	</xsl:template>
+
 
  	<!-- CATCH-ALL TEMPLATES -->
 
@@ -869,6 +879,7 @@
 		<fo:inline color="blue"><xsl:value-of select="name()"/></fo:inline>
 		<xsl:apply-templates/>
 	</xsl:template>
+
 
 	<!-- containers: ignore -->
 	<xsl:template match="
